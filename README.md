@@ -8,26 +8,39 @@
 3.부서포털_바탕화면/
 ├── index.html                 ← 포털 페이지 (이 파일만 열면 됩니다)
 ├── README.md                  ← 이 사용법
+├── 공개전_체크리스트.md         ← 외부 공개 전 점검 결과
+├── 배포용/                    ← 외부에 올릴 파일만 모은 폴더 (아래 '배포하기' 참고)
+├── images/                    ← 사진
+│   ├── hero-poster.jpg              첫 화면 대표 사진 (배경 영상의 첫 프레임)
+│   ├── og-image.jpg                 링크 공유 미리보기 이미지 (1200×630)
+│   ├── favicon-32.png / favicon-192.png / apple-touch-icon.png   탭·홈 화면 아이콘 (CI 심벌)
+│   ├── business-athlete.jpg         사업 1 카드 (육상 계주 출발) ─ 재단 홈페이지 사업 세부 페이지 배너
+│   └── business-dreamer.jpg         사업 2 카드 (배드민턴)      ─ 재단 홈페이지 사업 세부 페이지 배너
+├── videos/
+│   └── hero-sprint-start.mp4        첫 화면 배경 영상 (10.8초, 1366×720, 약 3.1MB)
 ├── files/                     ← 자료실에서 내려받는 파일
 │   ├── andang-brochure-2026.pdf     재단 브로슈어 2026 (8쪽)
 │   └── andang-articles-2026-06.pdf  재단 정관 2026.06.08 개정 (7쪽, 개인정보 제외본)
 └── 이전버전/
-    └── andang-foundation_v1.html    바꾸기 전 원본 사본
+    ├── andang-foundation_v1.html    index.html로 바꾸기 전 원본 사본
+    ├── index_before-media.html      사진·영상 넣기 전 사본
+    ├── index_before-banner-images.html  사업 카드 이미지를 재단 배너로 바꾸기 전 사본
+    └── index_before-checklist-fix.html  공개 전 체크리스트 수정 전 사본
 ```
 
 ## 여는 방법
 
 1. 파일 탐색기에서 `index.html`을 더블클릭합니다. 기본 브라우저(Chrome, Edge 등)로 열립니다.
-2. 자료실 다운로드가 되려면 `index.html`과 `files/` 폴더가 **같은 위치**에 있어야 합니다. 다른 곳으로 옮길 때는 폴더째 옮기세요.
+2. 사진·영상과 자료실 다운로드가 보이려면 `index.html`과 `images/`, `videos/`, `files/` 폴더가 **같은 위치**에 있어야 합니다. 다른 곳으로 옮길 때는 폴더째 옮기세요.
 3. 글꼴(Noto Sans KR)은 인터넷에서 불러옵니다. 인터넷이 안 되면 맑은 고딕으로 보입니다.
 
 ## 화면 구성
 
 | 메뉴 | 내용 |
 |---|---|
-| 홈 | '재단 소개 포털' 타이틀과 대표 문구, 바로가기 버튼 |
+| 홈 | 육상 출발 장면 배경 영상 위에 '재단 소개 포털' 타이틀과 대표 문구, 바로가기 버튼 |
 | 재단 소개 | 인사말, 재단 기본 정보(재단명·영문명·주소·전화), 핵심 가치 3가지 |
-| 재단 사업 | 사업 카드 2개(비인기 종목 선수 육성 / 사회인 생활체육). '자세히 보기'는 재단 공식 홈페이지로 연결 |
+| 재단 사업 | 사진이 들어간 사업 카드 2개(비인기 종목 선수 육성 / 사회인 생활체육). '자세히 보기'는 재단 공식 홈페이지로 연결 |
 | FAQ | 자주 묻는 질문 10개. 검색창·카테고리 버튼으로 걸러 보기, 질문을 누르면 답이 펼쳐짐 |
 | 자료실 | 번호·자료명·형식·등록일 목록. 자료명을 누르면 내려받음 |
 
@@ -86,6 +99,19 @@
 
 `id="business"` 영역의 `<article class="card">`가 카드 하나입니다. 윗부분 색은 `card-top navy`(남색) 또는 `card-top gold`(금색)으로 정합니다.
 
+### 사진·영상 바꾸기
+
+- **카드 사진:** `images/`에 새 사진을 넣고, 카드의 `<img class="card-photo" src="images/…" alt="…">`에서 파일 이름과 설명(alt)을 바꿉니다. 가로 1200px, 200KB 안팎이 적당합니다.
+- **배경 영상:** `videos/`에 새 mp4를 넣고 `<source src="videos/…">`를 바꿉니다. 10초 안팎, 1280×720, 3~5MB 이하를 권장합니다.
+- **대표 사진(포스터):** 영상이 재생되기 전과 '동작 줄이기' 설정 사용자에게 보이는 이미지입니다. 영상과 자연스럽게 이어지도록 **영상의 첫 프레임**을 잘라 `images/hero-poster.jpg`로 저장합니다. ffmpeg가 있으면 다음 명령으로 만들 수 있습니다.
+
+```powershell
+ffmpeg -i videos/새영상.mp4 -vf "select=eq(n\,0)" -frames:v 1 -q:v 3 images/hero-poster.jpg
+```
+
+- 영상을 바꾸면 사람이 화면 어디에 있는지 보고 `.hero-video`의 `object-position`(PC 62%, 모바일 72%)을 조정하세요. 숫자가 클수록 영상의 오른쪽이 보입니다.
+- 사진·영상을 새로 넣으면 페이지 맨 아래 출처 문구(`class="copy credit"`)도 고쳐 주세요.
+
 ### 재단 정보 수정
 
 주소·전화번호는 '재단 소개'의 정보 박스(`class="info-box"`), FAQ 10번, 맨 아래 푸터 **세 곳**에 있습니다. 바꿀 때는 세 곳을 모두 고치세요.
@@ -108,9 +134,26 @@
 - 섹션 위아래 여백 100px, 본문 최대 폭 1120px
 - 로고는 CI 국문 시그니처 이미지가 HTML 안에 들어 있습니다. 모양과 색은 바꾸지 않습니다.
 
+## 배포하기
+
+- 외부에 올릴 때는 **`배포용/` 폴더 안의 내용만** 올립니다: `index.html`, `files/`, `images/`, `videos/`.
+- `이전버전/`, `.claude/`, `README.md`, `공개전_체크리스트.md`는 작업용이라 올리지 않습니다.
+- 작업 폴더에서 페이지를 고친 뒤에는 `배포용/`을 다시 만들어야 최신 내용이 반영됩니다. PowerShell에서 이 폴더로 이동한 뒤 다음 명령을 실행하면 됩니다.
+
+```powershell
+Remove-Item -Recurse -Force 배포용; New-Item -ItemType Directory 배포용 | Out-Null; Copy-Item -Recurse index.html, files, images, videos 배포용
+```
+
+- 배포 주소가 정해지면 `index.html`의 `og:image`를 `https://배포주소/images/og-image.jpg` 같은 전체 주소로 바꾸고 `og:url`도 추가하세요. 그래야 카카오톡 등에서 공유 미리보기 이미지가 보입니다.
+
 ## 주의할 점
 
 - **개인정보:** 자료실에 올리는 파일에 개인 주소·생년월일·연락처가 없는지 꼭 확인하세요. 정관 원본의 임원·발기인 명단(부칙 제4조·제5조)은 이 이유로 뺐습니다.
 - **사실 확인:** FAQ와 소개 문구는 재단 홈페이지, 정관, 브로슈어 내용만 근거로 썼습니다. 아직 정해지지 않은 내용(지원 대상, 신청 방법, 공고 일정, 후원 방법)은 "준비 중"으로 답하고 있습니다. 확정되면 해당 FAQ를 고치세요.
+- **사진·영상 출처:**
+  - 첫 화면 영상: Pexels 무료 라이선스(상업적 이용 가능), 촬영자 Yaroslav Shuraev — https://www.pexels.com/video/two-women-are-running-on-a-track-8691728/
+  - 사업 카드 이미지: 재단 공식 홈페이지의 사업 세부 페이지 배너를 카드 비율(약 2.4:1)로 잘라 쓴 것입니다. 사업 1은 [비인기 종목 페이지](https://www.andangcultureandsportsfoundation.org/support-project/athlete), 사업 2는 [사회인 체육 페이지](https://www.andangcultureandsportsfoundation.org/support-project/dreamer)의 배너입니다. 홈페이지 배너가 바뀌면 같은 방식으로 다시 맞춰 주세요.
+  - 다른 사진을 쓸 때도 사용 허락이 있는 자료만 쓰세요.
+- **배경 영상 동작:** 소리 없이 반복 재생되고, 오른쪽 아래 버튼으로 멈추거나 다시 재생할 수 있습니다. 화면에서 벗어나면 자동으로 멈추고, 기기에서 '동작 줄이기'를 켠 사용자에게는 첫 프레임(대표 사진)에서 멈춘 채로 보입니다.
 - **공식 홈페이지:** https://www.andangcultureandsportsfoundation.org/
 - **이전 버전:** 수정 전 파일은 `이전버전/` 폴더에 있습니다. 크게 고치기 전에는 같은 방식으로 사본을 남겨 두세요(예: `andang-foundation_v2.html`).

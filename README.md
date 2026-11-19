@@ -144,7 +144,8 @@ ffmpeg -i videos/새영상.mp4 -vf "select=eq(n\,0)" -frames:v 1 -q:v 3 images/h
 Remove-Item -Recurse -Force 배포용; New-Item -ItemType Directory 배포용 | Out-Null; Copy-Item -Recurse index.html, files, images, videos 배포용
 ```
 
-- 배포 주소가 정해지면 `index.html`의 `og:image`를 `https://배포주소/images/og-image.jpg` 같은 전체 주소로 바꾸고 `og:url`도 추가하세요. 그래야 카카오톡 등에서 공유 미리보기 이미지가 보입니다.
+- 공개 주소: https://dkssudme2.github.io/dept-portal/ (GitHub `dkssudme2/dept-portal` 저장소, GitHub Pages)
+- `index.html`의 `og:url`·`og:image`·`canonical`은 위 공개 주소 기준 전체 주소로 적혀 있습니다. 배포 주소가 바뀌면 세 곳을 함께 바꾸세요. 그래야 카카오톡 등에서 공유 미리보기 이미지가 보입니다.
 
 ## 주의할 점
 

@@ -414,12 +414,11 @@
 
 <!-- ===== 홈 ===== -->
 <section id="home">
-  <!-- 배경 영상: 재생 전에는 영상의 첫 프레임(hero-poster.jpg)이 대표 사진으로 보임 -->
-  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" poster="images/hero-poster.jpg" aria-hidden="true">
-    <source src="videos/hero-sprint-start.mp4" type="video/mp4">
-  </video>
+  <!-- 배경 영상: 영상의 첫 프레임(hero-poster.jpg)이 대표 사진.
+       화면 폭 860px 이하(휴대폰)에서는 영상을 불러오지 않고 대표 사진만 보여줌. 영상 주소는 data-src에 두고 PC에서만 스크립트가 불러옴 -->
+  <video class="hero-video" id="heroVideo" muted loop playsinline preload="none" poster="images/hero-poster.jpg" data-src="videos/hero-sprint-start.mp4" aria-hidden="true"></video>
   <div class="hero-overlay" aria-hidden="true"></div>
-  <button type="button" class="hero-play" id="heroPlay" aria-label="배경 영상 일시정지" title="배경 영상 일시정지">❚❚</button>
+  <button type="button" class="hero-play" id="heroPlay" aria-label="배경 영상 일시정지" title="배경 영상 일시정지" hidden>❚❚</button>
   <div class="container">
     <span class="eyebrow">ANDANG CULTURE AND SPORTS FOUNDATION</span>
     <h1 class="hero-title">재단 소개 포털<br><span>안당문화체육재단</span></h1>
@@ -736,10 +735,25 @@
     if (!saved) applyTheme(e.matches ? 'dark' : 'light', false);
   });
 
-  // 배경 영상: 일시정지/재생 버튼, '동작 줄이기' 설정이면 첫 프레임(대표 사진)에서 멈춤
+  // 배경 영상: 휴대폰(폭 860px 이하)에서는 불러오지 않고 대표 사진(첫 프레임)만 보여줌.
+  // PC에서만 영상을 불러와 재생. 일시정지/재생 버튼, '동작 줄이기' 설정이면 첫 프레임에서 멈춤
   const heroVideo = document.getElementById('heroVideo');
   const heroPlay = document.getElementById('heroPlay');
+  const heroWide = window.matchMedia('(min-width: 861px)');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let heroLoaded = false;
+  let heroUserPaused = reduceMotion.matches;
+  function loadHeroVideo() {
+    if (heroLoaded || !heroWide.matches) return;
+    heroLoaded = true;
+    heroVideo.src = heroVideo.dataset.src;
+    heroVideo.preload = 'auto';
+    heroPlay.hidden = false;
+    if (reduceMotion.matches) setHeroPlaying(false);
+    else setHeroPlaying(true);
+  }
   function setHeroPlaying(playing) {
+    if (!heroLoaded) return;
     if (playing) { heroVideo.play().catch(() => setHeroPlaying(false)); }
     else { heroVideo.pause(); }
     const label = playing ? '배경 영상 일시정지' : '배경 영상 재생';
@@ -748,13 +762,13 @@
     heroPlay.title = label;
   }
   heroPlay.addEventListener('click', () => setHeroPlaying(heroVideo.paused));
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduceMotion.matches) { heroVideo.removeAttribute('autoplay'); setHeroPlaying(false); heroVideo.currentTime = 0; }
-  // 화면 밖으로 나가면 멈춰서 배터리·데이터를 아낌 (직접 멈춘 경우는 그대로 둠)
-  let heroUserPaused = reduceMotion.matches;
   heroPlay.addEventListener('click', () => { heroUserPaused = heroVideo.paused; });
+  loadHeroVideo();
+  // 태블릿을 가로로 돌리거나 창을 넓히면 그때 영상을 불러옴 (한 번 불러온 뒤에는 그대로 둠)
+  heroWide.addEventListener('change', loadHeroVideo);
+  // 화면 밖으로 나가면 멈춰서 배터리·데이터를 아낌 (직접 멈춘 경우는 그대로 둠)
   new IntersectionObserver(([e]) => {
-    if (heroUserPaused) return;
+    if (!heroLoaded || heroUserPaused) return;
     if (e.isIntersecting) heroVideo.play().catch(() => {}); else heroVideo.pause();
   }).observe(document.getElementById('home'));
 

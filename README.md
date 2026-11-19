@@ -25,7 +25,8 @@
     ├── andang-foundation_v1.html    index.html로 바꾸기 전 원본 사본
     ├── index_before-media.html      사진·영상 넣기 전 사본
     ├── index_before-banner-images.html  사업 카드 이미지를 재단 배너로 바꾸기 전 사본
-    └── index_before-checklist-fix.html  공개 전 체크리스트 수정 전 사본
+    ├── index_before-checklist-fix.html  공개 전 체크리스트 수정 전 사본
+    └── index_before-mobile-photo.html   휴대폰에서도 영상을 불러오던 때의 사본
 ```
 
 ## 여는 방법
@@ -38,7 +39,7 @@
 
 | 메뉴 | 내용 |
 |---|---|
-| 홈 | 육상 출발 장면 배경 영상 위에 '재단 소개 포털' 타이틀과 대표 문구, 바로가기 버튼 |
+| 홈 | 육상 출발 장면 배경 영상(휴대폰에서는 영상의 첫 프레임 사진) 위에 '재단 소개 포털' 타이틀과 대표 문구, 바로가기 버튼 |
 | 재단 소개 | 인사말, 재단 기본 정보(재단명·영문명·주소·전화), 핵심 가치 3가지 |
 | 재단 사업 | 사진이 들어간 사업 카드 2개(비인기 종목 선수 육성 / 사회인 생활체육). '자세히 보기'는 재단 공식 홈페이지로 연결 |
 | FAQ | 자주 묻는 질문 10개. 검색창·카테고리 버튼으로 걸러 보기, 질문을 누르면 답이 펼쳐짐 |
@@ -102,8 +103,8 @@
 ### 사진·영상 바꾸기
 
 - **카드 사진:** `images/`에 새 사진을 넣고, 카드의 `<img class="card-photo" src="images/…" alt="…">`에서 파일 이름과 설명(alt)을 바꿉니다. 가로 1200px, 200KB 안팎이 적당합니다.
-- **배경 영상:** `videos/`에 새 mp4를 넣고 `<source src="videos/…">`를 바꿉니다. 10초 안팎, 1280×720, 3~5MB 이하를 권장합니다.
-- **대표 사진(포스터):** 영상이 재생되기 전과 '동작 줄이기' 설정 사용자에게 보이는 이미지입니다. 영상과 자연스럽게 이어지도록 **영상의 첫 프레임**을 잘라 `images/hero-poster.jpg`로 저장합니다. ffmpeg가 있으면 다음 명령으로 만들 수 있습니다.
+- **배경 영상:** `videos/`에 새 mp4를 넣고 `<video id="heroVideo">`의 `data-src="videos/…"`를 바꿉니다. 10초 안팎, 1280×720, 3~5MB 이하를 권장합니다.
+- **대표 사진(포스터):** 휴대폰(화면 폭 860px 이하)에서 영상 대신 보이는 사진이자, PC에서 영상이 재생되기 전과 '동작 줄이기' 설정 사용자에게 보이는 이미지입니다. 영상과 자연스럽게 이어지도록 **영상의 첫 프레임**을 잘라 `images/hero-poster.jpg`로 저장합니다. ffmpeg가 있으면 다음 명령으로 만들 수 있습니다.
 
 ```powershell
 ffmpeg -i videos/새영상.mp4 -vf "select=eq(n\,0)" -frames:v 1 -q:v 3 images/hero-poster.jpg
@@ -155,6 +156,6 @@ Remove-Item -Recurse -Force 배포용; New-Item -ItemType Directory 배포용 | 
   - 첫 화면 영상: Pexels 무료 라이선스(상업적 이용 가능), 촬영자 Yaroslav Shuraev — https://www.pexels.com/video/two-women-are-running-on-a-track-8691728/
   - 사업 카드 이미지: 재단 공식 홈페이지의 사업 세부 페이지 배너를 카드 비율(약 2.4:1)로 잘라 쓴 것입니다. 사업 1은 [비인기 종목 페이지](https://www.andangcultureandsportsfoundation.org/support-project/athlete), 사업 2는 [사회인 체육 페이지](https://www.andangcultureandsportsfoundation.org/support-project/dreamer)의 배너입니다. 홈페이지 배너가 바뀌면 같은 방식으로 다시 맞춰 주세요.
   - 다른 사진을 쓸 때도 사용 허락이 있는 자료만 쓰세요.
-- **배경 영상 동작:** 소리 없이 반복 재생되고, 오른쪽 아래 버튼으로 멈추거나 다시 재생할 수 있습니다. 화면에서 벗어나면 자동으로 멈추고, 기기에서 '동작 줄이기'를 켠 사용자에게는 첫 프레임(대표 사진)에서 멈춘 채로 보입니다.
+- **배경 영상 동작:** 휴대폰(화면 폭 860px 이하)에서는 데이터를 아끼려고 영상을 아예 불러오지 않고 첫 프레임 사진만 보여줍니다. PC에서는 소리 없이 반복 재생되고, 오른쪽 아래 버튼으로 멈추거나 다시 재생할 수 있습니다. 화면에서 벗어나면 자동으로 멈추고, 기기에서 '동작 줄이기'를 켠 사용자에게는 첫 프레임(대표 사진)에서 멈춘 채로 보입니다.
 - **공식 홈페이지:** https://www.andangcultureandsportsfoundation.org/
 - **이전 버전:** 수정 전 파일은 `이전버전/` 폴더에 있습니다. 크게 고치기 전에는 같은 방식으로 사본을 남겨 두세요(예: `andang-foundation_v2.html`).
